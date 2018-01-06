@@ -1,0 +1,29 @@
+{
+	'delete_chat_photo': False,
+	'new_chat_photo': [],
+	'from': {
+		'first_name': u 'Duong',
+		'last_name': u 'Anh',
+		'is_bot': False,
+		'id': 378106375,
+		'language_code': u 'en'
+	},
+	'text': u 'z',
+	'caption_entities': [],
+	'entities': [],
+	'channel_chat_created': False,
+	'new_chat_members': [],
+	'supergroup_chat_created': False,
+	'chat': {
+		'first_name': u 'Duong',
+		'last_name': u 'Anh',
+		'type': u 'private',
+		'id': 378106375
+	},
+	'photo': [],
+	'date': 1512187724,
+	'group_chat_created': False,
+	'message_id': 88,
+	'new_chat_member': None
+}
+

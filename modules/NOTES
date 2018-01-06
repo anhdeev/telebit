@@ -1,0 +1,4 @@
++ telegram_client_api: API to login/read/reply/.. as a telegram client 
++ telegram_bot_webhook_api: API to interact with Bot that receive new updates passively as using webhook model
++ telegram_bot_poll_api: API to interact with Bot that receive new updates by request requently as using polling model
+

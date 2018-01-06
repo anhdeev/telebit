@@ -1,0 +1,28 @@
+{
+	"message": "",
+	"result": [{
+			"OrderUuid": "11a70d2e-d49d-44ea-b1bb-5d3100ad91e3",
+			"QuantityRemaining": 1053.18588731,
+			"Closed": null,
+			"ImmediateOrCancel": false,
+			"Uuid": "cc0fa3fc-371b-422a-9e73-0724de231a53",
+			"IsOpen": true,
+			"Exchange": "BTC-TRIG",
+			"OrderType": "LIMIT_BUY",
+			"Price": 0.0,
+			"CommissionPaid": 0.0,
+			"Opened": "2017-12-01T17:19:33.407",
+			"Updated": "2017-12-01T17:19:33.4094127",
+			"IsConditional": false,
+			"Limit": 9.495e-05,
+			"PricePerUnit": null,
+			"ConditionTarget": null,
+			"CancelInitiated": false,
+			"Id": 4348834214,
+			"Condition": "NONE",
+			"Quantity": 1053.18588731
+		}
+	],
+	"success": true
+}
+

@@ -1,0 +1,15 @@
+INFO:root:UpdateNewChannelMessage(
+    message=Message(
+        out=False, mentioned=False, media_unread=False, silent=True, post=True, id=4725, from_id=None, 
+        to_id=PeerChannel(channel_id=1112224841), 
+        fwd_from=None, via_bot_id=None, reply_to_msg_id=None, 
+        date=datetime.utcfromtimestamp(1512486824), 
+        message='We recommend a great channel.', 
+        media=None, reply_markup=None, entities=[MessageEntityUrl(offset=559, length=44)], 
+        views=1, edit_date=None, post_author=None, grouped_id=None
+        ), 
+    pts=10084, pts_count=1
+    )
+    
+INFO:root:UpdateChatUserTyping(chat_id=1148872972, user_id=488646478, action=SendMessageTypingAction())
+

@@ -1,0 +1,89 @@
+{
+	"message": "", 
+	"result": 
+	[
+		{
+		"Currency": 
+			{
+				"Notice": null, 
+				"TxFee": 0.001, 
+				"CurrencyLong": "Bitcoin", 
+				"CoinType": "BITCOIN", 
+				"Currency": "BTC", 
+				"MinConfirmation": 2, 
+				"BaseAddress": "1N52wHoVR79PMDishab2XmRHsbekCdGquK", 
+				"IsActive": true
+			}, 
+			"Balance": {
+				"Available": 1.15702403, 
+				"Requested": false, 
+				"Updated": "2017-12-01T14:56:26.673", 
+				"Uuid": "cc0fa3fc-371b-422a-9e73-0724de231a53", 
+				"AutoSell": null, 
+				"Currency": "BTC", 
+				"CryptoAddress": "1A9bWV4orbHWE5crD92eamKgxXHCTcpH1K", 
+				"Balance": 1.15702403, 
+				"Pending": 0.0, 
+				"AccountId": 243094
+			}, 
+			"EthereumMarket": null, 
+			"FiatMarket": null, 
+			"BitcoinMarket": null
+		}, 
+		{
+		"Currency": 
+			{
+				"Notice": null, 
+				"TxFee": 0.01, 
+				"CurrencyLong": "Litecoin", 
+				"CoinType": "BITCOIN",
+				"Currency": "LTC", 
+				"MinConfirmation": 6, 
+				"BaseAddress": "LhyLNfBkoKshT7R8Pce6vkB9T2cP2o84hx", 
+				"IsActive": true
+			}, 
+			"Balance": {
+				"Available": 0.0, 
+				"Requested": false, 
+				"Updated": null, 
+				"Uuid": "cc0fa3fc-371b-422a-9e73-0724de231a53", 
+				"AutoSell": null, 
+				"Currency": "LTC", 
+				"CryptoAddress": "LL3EtL8Ts2nEMLEk7mQhzzjseCPTdApVyN", 
+				"Balance": 0.0, 
+				"Pending": 0.0, 
+				"AccountId": 243094
+			}, 
+			"EthereumMarket": {
+				"PrevDay": 0.19389997, 
+				"Volume": 6666.35307691, 
+				"Last": 0.20556999, 
+				"OpenSellOrders": 299, 
+				"TimeStamp": "2017-12-01T16:39:37.147", 
+				"Bid": 0.20507, 
+				"Created": "2017-06-25T03:06:46.83", 
+				"OpenBuyOrders": 328, "High": 0.20564297, 
+				"MarketName": "ETH-LTC", 
+				"Low": 0.18969558, 
+				"Ask": 0.20556999, 
+				"BaseVolume": 1318.84196525
+			}, 
+			"FiatMarket": null, 
+			"BitcoinMarket": {
+				"PrevDay": 0.00840599, 
+				"Volume": 135721.43040651, 
+				"Last": 0.00871421, 
+				"OpenSellOrders": 9256, 
+				"TimeStamp": "2017-12-01T16:45:24.507", 
+				"Bid": 0.00871421, 
+				"Created": "2014-02-13T00:00:00", 
+				"OpenBuyOrders": 3612, 
+				"High": 0.008883, 
+				"MarketName": "BTC-LTC", 
+				"Low": 0.008336, 
+				"Ask": 0.00872, 
+				"BaseVolume": 1168.58494662
+				}
+		}
+	]
+}

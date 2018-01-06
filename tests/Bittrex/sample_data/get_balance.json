@@ -1,0 +1,16 @@
+{
+	"message": "", 
+	"result": {
+		"Available": 0.0, 
+		"Requested": false, 
+		"Updated": null, 
+		"Uuid": "cc0fa3fc-371b-422a-9e73-0724de231a53", 
+		"AutoSell": null, 
+		"Currency": "ETH", 
+		"CryptoAddress": "0x81a7c2cc266eec6da170064595afe7e0562593f1", 
+		"Balance": 0.0, 
+		"Pending": 0.0, 
+		"AccountId": 243094
+	}, 
+	"success": true
+}
