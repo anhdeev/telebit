@@ -4,6 +4,7 @@ import json
 import logging
 from packages.bittrex.bittrex.bittrex import * # import marcro definition
 from modules.bittrex_api import *
+from modules.mostrecentcoin import MostRecentCoin
 
 MAX_BUY_AMOUNT=0.3
 MIN_BUY_AMOUNT=0.0005
@@ -264,6 +265,9 @@ class Commander(object):
             if args_len == 1:
                 self.currency = self.args[0]
 
+        elif self.cmd in ['/d', '/distribution']:
+            pass
+
         elif self.cmd in ['/i', '/info']: # /info <market> <interval>
             args_len = len(self.args)
             # I. Verify number of arguments
@@ -317,6 +321,21 @@ class Commander(object):
         elif self.cmd in ["/h", "/help"]:
             self.result = self.show_help()
             return False
+        elif self.cmd in ["/r", "/recent"]:
+            args_len = len(self.args)
+            # I. Verify number of arguments
+            if args_len != 1 and args_len != 0:
+                self.result = "Wrong command, need 0 or 1 arguments. Given %s." % args_len
+                logging.warning("Wrong command, need 0 or 1  arguments")
+                return False
+            if args_len == 1:
+                if not self.args[0].isdigit():
+                    self.result = "Wrong argument format, a number of last hours should be an integer."
+                else:
+                    self.args[0] = int(self.args[0])
+            else:
+                self.args.append(1)
+
         elif self.cmd == "/test":
             pass
         else:
@@ -341,7 +360,7 @@ class Commander(object):
         # Get Orders
         elif self.cmd in ['/o', '/orders']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
             open_orders = bittrex_v11_account_api.get_openorders(self.market)
 
@@ -359,7 +378,7 @@ class Commander(object):
         # Get Balances
         elif self.cmd in ['/ba', '/balances']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
             if self.currency:
                 balance = bittrex_v20_account_api.get_balance(self.currency)
@@ -383,10 +402,22 @@ class Commander(object):
                                 if key not in ['CryptoAddress', 'Currency']:
                                     self.result += '\t\t' + key + ' : ' + str(balance[key]) + '\n'
                 self.result='Can not get all balances due to too long message.'
+
+        # Get Balance distribution
+        elif self.cmd in ['/d', '/distribution']:
+            balance = bittrex_v20_account_api.get_balance_dist()
+            if balance['success']:
+                self.result = "Balance Distribution:\n"
+                logging.info(str(balance))
+                #for key in balance['result']:
+                #    if key in ['Balance', 'Available', 'Pending']:
+                #        self.result += '\t' + key + ' : ' + str(balance['result'][key]) + '\n'
+            else:
+                self.result = balance['message']
         # Buy Limit
         elif self.cmd in ['/b', '/buy']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
 
             open_buy = bittrex_v20_account_api.buy_limit(self.market, self.args[1], self.args[2])
@@ -400,7 +431,7 @@ class Commander(object):
         # Sell Limit
         elif self.cmd in ['/s', '/sell']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
 
             open_sell = bittrex_v20_account_api.sell_limit(self.market, self.args[1], self.args[2])
@@ -414,7 +445,7 @@ class Commander(object):
         # Sell Stop Loss
         elif self.cmd in ['/sl', '/stoploss']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
 
             open_sell = bittrex_v20_account_api.sell_stop_loss(self.market, self.args[1], self.args[2], self.args[3])
@@ -429,7 +460,7 @@ class Commander(object):
         # Buy Stop
         elif self.cmd in ['/bs', '/buystop']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
 
             open_sell = bittrex_v20_account_api.buy_stop(self.market, self.args[1], self.args[2], self.args[3])
@@ -444,7 +475,7 @@ class Commander(object):
         # Cancel all orders
         elif self.cmd in ['/c', '/cancel']:
             if not self.isMe:
-                self.result == "WARNING!! You have no access right to anhdv bittrex account!"
+                self.result = "WARNING!! You have no access right to anhdv bittrex account!"
                 return self.result
 
             open_orders = bittrex_v11_account_api.get_openorders()
@@ -456,6 +487,10 @@ class Commander(object):
                         self.result += '\t %s' % order['Exchange'] + '\t[y]\n'
                     else:
                         self.result += '\t %s' % order['Exchange'] + '\t[n]\n'
+
+        elif self.cmd in ['/r', '/recent']:
+            MostRecentCoin.init()
+            self.result = MostRecentCoin.get_statistic(self.args[0])
         elif self.cmd == "/test":
             #open_buy = bittrex_v20_account_api.buy_market( "BTC-RDD", 3450)
             #self.result = str(open_buy)

@@ -22,6 +22,7 @@ bittrex_v20_public_api=None
 bittrex_v20_account_api=None
 bittrex_v11_account_api=None
 
+
 class BittrexV20PublicAPI(object):
     """
     Integration tests for the Bittrex public API.
@@ -95,6 +96,11 @@ class BittrexV11AccountAPI(object):
         actual = self.bittrex.get_balances()
         return actual
 
+
+    def get_balance_dist(self):
+        actual = self.bittrex.get_balance_distribution()
+        return actual
+
     def get_balance(self, currency):
         actual = self.bittrex.get_balance(currency)
         return actual
@@ -127,10 +133,22 @@ class BittrexV20AccountAPI(object):
 
     def get_balances(self):
         actual = self.bittrex.get_balances()
+        return actuali
+
+    def get_currencies(self):
+        actual = self.bittrex.get_currencies()
         return actual
 
     def get_balance(self, currency):
         actual = self.bittrex.get_balance(currency)
+        return actual
+
+    def get_wallet_health(self):
+        actual = self.bittrex.get_wallet_health()
+        return actual
+
+    def get_balance_dist(self):
+        actual = self.bittrex.get_balance_distribution()
         return actual
 
     def get_order_history_one_market(self, market):

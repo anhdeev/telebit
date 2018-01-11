@@ -6,6 +6,7 @@ from os import environ
 import logging
 import json
 import re
+from datetime import datetime
 # environ is used to get API information from environment variables
 # You could also use a config file, pass them as arguments,
 # or even hardcode them (not recommended)
@@ -13,7 +14,13 @@ from packages.Telethon.telethon import TelegramClient
 from packages.Telethon.telethon.errors import SessionPasswordNeededError
 from packages.Telethon.telethon.tl.types import PeerUser, PeerChat, PeerChannel
 from modules.flashpump import FlashPump
+from modules.mongodb.mongodb import MongoDatabase
+from modules.bittrex_api import *
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
 logging.getLogger().setLevel(logging.INFO)
+logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
 
 # These example values won't work. You must get your own api_id and
 # api_hash from https://my.telegram.org, under API Development.
@@ -55,11 +62,16 @@ SIG_KEYS=[
 
 client = None
 bot = None
+MSG_BUFFER = []
+MSG_COUNT = 0
+CURRENCIES = []
 
 class MyTelegramClient(object):
     def __init__(self, botwh):
         global client
         global bot
+        global bittrex_v20_public_api
+        global bittrex_v20_account_api
 
         bot = botwh
         client = TelegramClient(session_name,
@@ -83,15 +95,76 @@ class MyTelegramClient(object):
                 except SessionPasswordNeededError:
                     password = getpass('Two step verification enabled. Please enter your password: ')
                     code_ok = client.sign_in(password=password)
+
+        if not bittrex_v20_public_api:
+            bittrex_v20_public_api = BittrexV20PublicAPI()
+        if not bittrex_v20_account_api:
+            bittrex_v20_account_api = BittrexV20AccountAPI()
+        # Init coin list
+        self.get_currencies()
+        MongoDatabase.init()
         logging.info('INFO: Client initialized succesfully!')
+
+
+    # Get all current supported currencies
+    def get_currencies(self):
+        logging.info("Getting bitttrex supported currencies...")
+        result = bittrex_v20_public_api.get_currencies();
+        if result.get("success"):
+            for coin in result["result"]:
+                if coin.get("Currency") not in ["TIME", "U", "BAY", "SOON"]:
+                    CURRENCIES.append(' ' + coin.get("Currency").lower() + ' ')
+
+        logging.info("Done.")
+
+    def count_coin_1h():
+        global MSG_BUFFER
+        #print('Every 10 seconds')
+        COIN_BUFFER = []
+        now = datetime.now()
+
+        if MSG_BUFFER == "":
+            return
+
+        print('[%s] Discovering most recent coins...' % str(now))
+
+        for coin in CURRENCIES:
+            count = 0
+            for msg in MSG_BUFFER:
+                if coin in msg.get('msg'):
+                    count +=1
+                    msg['save'] = True
+                    msg['coins'].append(coin[1:-1])
+            if count > 0:
+                COIN_BUFFER.append({'coin': coin, 'count': count, 'time': now})
+
+        # Save to db
+        for msg in MSG_BUFFER:
+            if msg.get('save'):
+                MongoDatabase.insert_one('telegram_message', msg)
+
+        for coin in COIN_BUFFER:
+                print(str(coin))
+                MongoDatabase.insert_one('coin_statistic', coin)
+
+        COIN_BUFFER=[]
+        MSG_BUFFER=[]
 
     def run(object):
         global client
         client.add_update_handler(update_handler)
+
+        sched = BackgroundScheduler()
+        # seconds can be replaced with minutes, hours, or days
+        sched.add_job(MyTelegramClient.count_coin_1h, 'interval', seconds=300)
+        sched.start()
+
+
         input('Press Enter to stop this!\n')
 
 def update_handler(update):
     global bot
+    global MSG_BUFFER
 
     if not EVENTS.get(update.__class__.__name__):
         return None
@@ -106,7 +179,8 @@ def update_handler(update):
             return None
 
         # Handle pumb signal
-        if is_pumb_message(update):
+        pumb_msg, channel_name = is_pumb_message(update)
+        if pumb_msg:
             # Extract signal
             signal = extract_signal(message)
             logging.info("Signal: " + str(signal))
@@ -117,6 +191,10 @@ def update_handler(update):
 
         # Community attention level
         #logging.info("Channel message: %s" % message)
+        if message != "":
+            now = datetime.now()
+            #now = '{:%B %d, %H:%M}'.format(now)
+            MSG_BUFFER.append({ 'msg': ' ' + message.lower() + ' ', 'from': channel_name, 'time': now, 'coins': [] })
 
         return None
 
@@ -127,34 +205,36 @@ def is_pumb_message(update):
         try:
             # Get channel name
             channel_id = update.message.to_id.channel_id
-            #logging.info("channel id = " + str(channel_id))
+            #logging.info("channel id = " + str(update.message))
             if str(channel_id) == "1147798110":
                 channel_name = "Tradingcryptocoach"
             elif str(channel_id) == "1291260229":
                 channel_name = "maynguoilinh2018"
+            elif str(channel_id) == "1181052147":
+                channel_name = "maygroup"
             else:
                 channel = client.get_entity(PeerChannel(channel_id=channel_id))
                 if not channel:
-                    return False
+                    return False, None
                 channel_name = channel.username
         except:
             logging.error("Cannot get channel:")
             logging.error(update)
-            return False
+            return False, None
 
         if channel_name not in TRACKING_CHANNEL:
-            return False
+            return False, channel_name
 
         # Ignore if it is a reply/forward message
         if hasattr(update.message, 'reply_to_msg_id'):
             if update.message.reply_to_msg_id != None:
-                return False
+                return False, channel_name
 
         if hasattr(update.message, 'fwd_from'):
             if update.message.fwd_from != None:
-                return False
+                return False, channel_name
 
-        return True
+        return True, channel_name
 
 def extract_signal(message):
     if message == '':

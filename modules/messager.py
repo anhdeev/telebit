@@ -8,6 +8,8 @@ MY_USER_NAME="Duong Anh"
 MY_USER_ID="378106375"
 MY_CHAT_ID="378106375"
 
+MY_TEST_CHANNEL_ID="1396402572"
+
 class Messager(object):
     def __init__(self, update):
         self.update = update
@@ -42,6 +44,9 @@ class Messager(object):
             logging.warn("The message is not in type of 'message' neither 'channel_post'")
 
     def execute_command(self):
+        if self.text == None or self.text == "" or self.text[:1] != '/':
+            return (None, None)
+
         if self.from_user:
             if str(self.from_user['id']) != MY_USER_ID:
                 logging.debug("Execute message type message")

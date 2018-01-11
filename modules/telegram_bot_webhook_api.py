@@ -14,6 +14,7 @@ from modules.messager import Messager
 #MY_TELEGRAM_KEY="477813611:AAEgbjU4Bz2EUJvftW4RZuRPdoGoSzDTK4M" 
 # telebit
 MY_TELEGRAM_KEY="463733841:AAHURJK64srQaqVrnF9hf2iU5_BOG2SVbrc"
+MY_TEST_CHANNEL_ID="1396402572"
 
 class TelegramWebhookBot(object):
     def __init__(self):
@@ -42,8 +43,12 @@ class TelegramWebhookBot(object):
                 messager = Messager(update)
                 chat_id, result = messager.execute_command()
 
+            #if "Most recent" in result:
+                #self.bot.sendMessage(chat_id=MY_TEST_CHANNEL_ID, text=str(result))
             if chat_id:
                 self.bot.sendMessage(chat_id=chat_id, text=str(result))
+            else:
+                pass
 
             return 'ok'
 
