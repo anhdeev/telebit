@@ -33,3 +33,10 @@ class MostRecentCoin(object):
 
         return print_msg
 
+    def remove_old_records(dtime):
+        try:
+            since = datetime.now() - timedelta(days=dtime)
+            items =  MongoDatabase.remove('coin_statistic', {'time':{"$lt": since}})
+        except:
+            return "Cannot remove old record"
+

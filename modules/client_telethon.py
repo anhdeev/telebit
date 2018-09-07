@@ -16,6 +16,7 @@ from packages.Telethon.telethon.tl.types import PeerUser, PeerChat, PeerChannel
 from modules.flashpump import FlashPump
 from modules.mongodb.mongodb import MongoDatabase
 from modules.bittrex_api import *
+from modules.mostrecentcoin import MostRecentCoin
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
@@ -150,13 +151,17 @@ class MyTelegramClient(object):
         COIN_BUFFER=[]
         MSG_BUFFER=[]
 
+    def remove_old_records():
+        MostRecentCoin.remove_old_records(20);
+
     def run(object):
         global client
         client.add_update_handler(update_handler)
 
         sched = BackgroundScheduler()
         # seconds can be replaced with minutes, hours, or days
-        sched.add_job(MyTelegramClient.count_coin_1h, 'interval', seconds=300)
+        sched.add_job(MyTelegramClient.count_coin_1h, 'interval', seconds=3600)
+        sched.add_job(MyTelegramClient.remove_old_records, 'interval', hours=24)
         sched.start()
 
 
@@ -197,6 +202,7 @@ def update_handler(update):
             MSG_BUFFER.append({ 'msg': ' ' + message.lower() + ' ', 'from': channel_name, 'time': now, 'coins': [] })
 
         return None
+
 
 def is_pumb_message(update):
         global client
